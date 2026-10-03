@@ -1,0 +1,117 @@
+name: i18n-audit
+description: Find broken placeholders, invalid ICU messages, lost Trans tags and missing keys in locale files.
+author: theluckystrike
+branding:
+  icon: globe
+  color: blue
+
+inputs:
+  path:
+    description: Directory to scan, relative to the workspace.
+    default: "."
+  source-locale:
+    description: Source locale code (en also matches en-US, en_GB, ...).
+    default: en
+  fail-on:
+    description: Fail the step when there are at least this many error findings. 0 never fails.
+    default: "1"
+  code-scan:
+    description: Also scan JS/TS/Vue/Ruby code for keys missing from the source locale ("true" or "false").
+    default: "false"
+  args:
+    description: Extra arguments for i18n-audit, e.g. "--skip stale_key --min-severity warning".
+    default: ""
+  sarif-file:
+    description: Where to write the SARIF report.
+    default: i18n-audit.sarif
+  upload-sarif:
+    description: Upload the SARIF report to GitHub code scanning (needs security-events write permission).
+    default: "true"
+  sarif-category:
+    description: Code scanning category, to keep results apart when the action runs more than once.
+    default: i18n-audit
+  python-version:
+    description: Python version used to run the tool.
+    default: "3.12"
+
+outputs:
+  sarif-file:
+    description: Path of the SARIF report.
+    value: ${{ steps.audit.outputs.sarif-file }}
+  exit-code:
+    description: Exit code of i18n-audit (1 when the fail-on threshold was reached).
+    value: ${{ steps.audit.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install i18n-audit
+      shell: bash
+      run: python -m pip install --disable-pip-version-check --quiet "$ACTION_PATH"
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+
+    - name: Run i18n-audit
+      id: audit
+      shell: bash
+      env:
+        SCAN_PATH: ${{ inputs.path }}
+        SOURCE_LOCALE: ${{ inputs.source-locale }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        CODE_SCAN: ${{ inputs.code-scan }}
+        EXTRA_ARGS: ${{ inputs.args }}
+        SARIF_FILE: ${{ inputs.sarif-file }}
+      run: |
+        set +e
+        args=("$SCAN_PATH" --source-locale "$SOURCE_LOCALE")
+        if [ "$CODE_SCAN" = "true" ]; then args+=(--code-scan); fi
+        # shellcheck disable=SC2206
+        extra=($EXTRA_ARGS)
+        args+=("${extra[@]}")
+
+        # SARIF paths must be relative to the repository root, so scan from there.
+        i18n-audit "${args[@]}" --fail-on 0 --format sarif --output "$SARIF_FILE"
+        if [ "$SCAN_PATH" != "." ]; then
+          python - "$SARIF_FILE" "$SCAN_PATH" <<'PY'
+        import json, os, sys
+        path, prefix = sys.argv[1], os.path.normpath(sys.argv[2])
+        doc = json.load(open(path, encoding="utf-8"))
+        for run in doc["runs"]:
+            for res in run["results"]:
+                for loc in res["locations"]:
+                    art = loc["physicalLocation"]["artifactLocation"]
+                    art["uri"] = os.path.join(prefix, art["uri"]).replace(os.sep, "/")
+        json.dump(doc, open(path, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+        PY
+        fi
+
+        i18n-audit "${args[@]}" --fail-on 0 --format md --min-severity warning > i18n-audit-summary.md
+        head -c 900000 i18n-audit-summary.md >> "$GITHUB_STEP_SUMMARY"
+        rm -f i18n-audit-summary.md
+
+        i18n-audit "${args[@]}" --fail-on "$FAIL_ON"
+        code=$?
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "sarif-file=$SARIF_FILE" >> "$GITHUB_OUTPUT"
+        exit 0
+
+    - name: Upload SARIF
+      if: ${{ always() && inputs.upload-sarif == 'true' }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: ${{ inputs.sarif-category }}
+
+    - name: Check result
+      shell: bash
+      env:
+        CODE: ${{ steps.audit.outputs.exit-code }}
+      run: |
+        if [ "$CODE" != "0" ]; then
+          echo "::error::i18n-audit found translation errors (see the log above or the code scanning alerts)"
+          exit "$CODE"
+        fi
