@@ -1,0 +1,6 @@
+msgid ""
+msgstr ""
+"Language: it\n"
+
+msgid "Delete {name}?"
+msgstr "Eliminare '{name}'?"
