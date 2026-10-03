@@ -4,7 +4,7 @@ Finds translation bugs that users actually see: dropped `{{placeholders}}`, brok
 
 It reads the locale files already in your repository, compares every translation with its source string, and reports each problem with file, line, key, locale, the source text and the translated text. Pure Python standard library, Python 3.9+, no network access, no API keys.
 
-The checks come from an audit of open source projects on 2026-10-03 that found 602 broken strings, 326 of which were fixed in pull requests. Each example below is covered by a test in `tests/test_readme_examples.py`.
+The checks come from an audit of 13 open source projects with locale files on 2026-10-03, which found 930 broken strings. Each example below is covered by a test in `tests/test_readme_examples.py`.
 
 ## What it catches
 
@@ -30,7 +30,9 @@ Placeholders are compared as sets, so reordering is fine (`%1$s ... %2$d` agains
 
 The strings below are simplified, but each pattern is one the audit found in a real, actively maintained project.
 
-**1. A placeholder replaced by the value it usually has.** A white-label product passed its brand name as `{{whiteLabelText}}`. Translators saw the English UI, where it rendered as the default product name, and typed the name directly. 46 strings in one project stopped following the configured brand.
+### 1. A placeholder replaced by the value it usually has
+
+A white-label product passed its brand name as `{{whiteLabelText}}`. Translators saw the English UI, where it rendered as the default product name, and typed the name directly. 46 strings in one project stopped following the configured brand.
 
 ```
 source  "welcome": "Welcome to {{whiteLabelText}}"
@@ -44,7 +46,9 @@ locales/de/common.json
           missing {{whiteLabelText}}
 ```
 
-**2. An ICU apostrophe that turns an argument into literal text.** In ICU MessageFormat an apostrophe directly before `{` starts quoted text. A translator who quoted a name the way Italian typography suggests made the UI print `{name}` verbatim.
+### 2. An ICU apostrophe that turns an argument into literal text
+
+In ICU MessageFormat an apostrophe directly before `{` starts quoted text. A translator who quoted a name the way Italian typography suggests made the UI print `{name}` verbatim.
 
 ```
 source  msgid "Delete {name}?"
@@ -58,7 +62,9 @@ src/locales/it/messages.po
           missing {name}. {name} is inside apostrophe quoted text and renders literally; use '' for a literal apostrophe
 ```
 
-**3. Trans markup shown to users.** react-i18next only turns `<email>` into a component when the tag pair survives translation. When the closing tag was lost, Korean and Brazilian Portuguese users saw raw `<email>` markup.
+### 3. Trans markup shown to users
+
+react-i18next only turns `<email>` into a component when the tag pair survives translation. When the closing tag was lost, Korean and Brazilian Portuguese users saw raw `<email>` markup.
 
 ```
 source  "sent": "We sent a code to <email>{{email}}</email>"
@@ -193,7 +199,7 @@ Without the action:
 
 ## Output formats
 
-**text** (default) groups findings by file:
+The `text` format (default) groups findings by file:
 
 ```
 src/lang/fr.json
@@ -210,11 +216,11 @@ Scanned 1 catalog group(s): src/lang/{loc}.json (json, icu, 4 locales)
 9 finding(s): 9 error, 0 warning, 0 info
 ```
 
-**json** has `summary`, `tms`, `groups` and `findings`. Every finding has `file`, `line`, `key`, `locale`, `kind`, `severity`, `message`, `source_text` and `locale_text`.
+The `json` format has `summary`, `tms`, `groups` and `findings`. Every finding has `file`, `line`, `key`, `locale`, `kind`, `severity`, `message`, `source_text` and `locale_text`.
 
-**md** is a summary plus a findings table, ready for a PR comment or job summary.
+The `md` format is a summary plus a findings table, ready for a PR comment or job summary.
 
-**sarif** is SARIF 2.1.0 with one rule per kind and repository-relative paths, for GitHub code scanning and other SARIF viewers.
+The `sarif` format is SARIF 2.1.0 with one rule per kind and repository-relative paths, for GitHub code scanning and other SARIF viewers.
 
 ## Limitations
 
