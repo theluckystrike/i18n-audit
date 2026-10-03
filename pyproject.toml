@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "i18n-audit"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Find translation bugs users actually see: broken placeholders, invalid ICU messages, lost Trans tags, missing keys."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -12,7 +12,7 @@ license = { text = "MIT" }
 authors = [{ name = "theluckystrike" }]
 keywords = ["i18n", "l10n", "translation", "icu", "i18next", "gettext", "lint", "sarif"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -39,6 +39,9 @@ Issues = "https://github.com/theluckystrike/i18n-audit/issues"
 
 [project.scripts]
 i18n-audit = "i18n_audit.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "i18n_audit.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src"]

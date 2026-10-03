@@ -116,3 +116,8 @@ def test_empty_directory(capsys, tmp_path):
 def test_module_entry_point():
     p = subprocess.run([sys.executable, "-m", "i18n_audit", "--version"], capture_output=True, text=True)
     assert p.returncode == 0 and __version__ in p.stdout
+
+
+def test_installed_version_matches_package():
+    from importlib.metadata import version
+    assert version("i18n-audit") == __version__
