@@ -8,8 +8,10 @@ apostrophe quoting.
 Two apostrophe modes are supported:
 
 * ``icu`` (ICU4J / formatjs default, DOUBLE_OPTIONAL): an apostrophe only starts
-  quoted text when it is followed by ``{``, ``}`` (or ``#`` / ``|`` inside a
-  plural). ``''`` is a literal apostrophe. Any other apostrophe is literal.
+  quoted text when it is followed by ``{``, ``}``, ``<`` or ``>`` (or ``#`` /
+  ``|`` inside a plural). ``''`` is a literal apostrophe. Any other apostrophe
+  is literal. ``<`` and ``>`` follow formatjs, where ``'<b>'`` is literal text
+  rather than a rich text tag.
 * ``java`` (java.text.MessageFormat, DOUBLE_REQUIRED): every single apostrophe
   starts or ends quoted text, so ``l'utente {0}`` renders ``{0}`` literally.
 """
@@ -30,6 +32,7 @@ _NAME = re.compile(r"[^\s{}#,'\"=<>|:;!?~`^&*()\[\]\\/+@%$]+")
 _KEYWORD = re.compile(r"[A-Za-z][A-Za-z0-9_-]*")
 _EXPLICIT = re.compile(r"=\s*-?\d+(?:\.\d+)?")
 _OFFSET = re.compile(r"offset\s*:\s*(-?\d+)")
+_QUOTE_STARTERS = "{}<>"
 
 
 class ICUSyntaxError(ValueError):
@@ -118,7 +121,7 @@ class _Parser:
             buf.append("'")
             return i + 2
         if self.mode == "icu":
-            special = "{}" + ("#|" if in_plural else "")
+            special = _QUOTE_STARTERS + ("#|" if in_plural else "")
             if not nxt or nxt not in special:
                 buf.append("'")
                 return i + 1
@@ -302,3 +305,38 @@ def literal_braces(message: str, mode: str = "icu") -> List[str]:
 
     visit(parse(message, mode))
     return out
+
+
+def strip_quoted(message: str, mode: str = "icu") -> str:
+    """``message`` with apostrophe quoted (literal) text removed.
+
+    Works on the raw text, so it also handles messages that do not parse. Used
+    to keep quoted literals such as ``'<head>'`` out of the tag comparison.
+    """
+    out: List[str] = []
+    i, n = 0, len(message)
+    while i < n:
+        c = message[i]
+        if c != "'":
+            out.append(c)
+            i += 1
+            continue
+        nxt = message[i + 1] if i + 1 < n else ""
+        if nxt == "'":
+            out.append("'")
+            i += 2
+            continue
+        if mode == "icu" and (not nxt or nxt not in _QUOTE_STARTERS):
+            out.append(c)
+            i += 1
+            continue
+        i += 1
+        while i < n:
+            if message[i] == "'":
+                if i + 1 < n and message[i + 1] == "'":
+                    i += 2
+                    continue
+                i += 1
+                break
+            i += 1
+    return "".join(out)

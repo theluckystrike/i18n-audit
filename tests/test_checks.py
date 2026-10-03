@@ -140,6 +140,20 @@ def test_icu_unknown_plural_category(write_tree):
     assert f.kind == "invalid_icu" and f.severity == "warning" and "'autre'" in f.message
 
 
+def test_icu_quoted_tags_are_literal_text(write_tree):
+    # Regression (umami): '<head>...</head>' is quoted literal text in formatjs,
+    # so a translation without it is not a tag mismatch.
+    root = write_tree({
+        "package.json": '{"dependencies": {"react-intl": "6"}}',
+        "lang/en.json": '{"a": "Place the code in the \'<head>...</head>\' section", "b": "<b>{x}</b> \'<i>\'"}',
+        "lang/de.json": '{"a": "Tracking-Code", "b": "{x}"}',
+    })
+    findings = checks.run(detect.discover(root)[0])
+    assert [(f.key, f.kind, f.message) for f in findings] == [
+        ("b", "tag_mismatch", "Tags differ: missing </b>, <b>")]
+    assert findings[0].source_text == "<b>{x}</b> '<i>'"
+
+
 # ------------------------------------------------------------------ vue-i18n
 def test_vue():
     groups, findings = audit("vue")

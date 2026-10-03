@@ -165,3 +165,17 @@ def test_literal_braces():
     assert icu.literal_braces("Ciao {name}") == []
     assert icu.literal_braces("{n, plural, other {'{x}' #}}") == ["x"]
     assert icu.literal_braces("L'utente {0} il {1,date,short}", "java") == ["0", "1"]
+
+
+def test_apostrophe_before_angle_bracket_quotes():
+    # formatjs: '<' and '>' start quoted text, so '<'{name}'>' keeps {name} an argument
+    names, _ = icu.arguments("'<'{name}'>'")
+    assert names == {"name"}
+    assert "".join(n.value for n in icu.parse("'<b>' tag") if isinstance(n, icu.Text)) == "<b> tag"
+
+
+def test_strip_quoted():
+    assert icu.strip_quoted("place it in '<head>...</head>' now") == "place it in  now"
+    assert icu.strip_quoted("It''s <b>{x}</b>") == "It's <b>{x}</b>"
+    assert icu.strip_quoted("Don't <b>x</b>") == "Don't <b>x</b>"
+    assert icu.strip_quoted("L'utente <b>", "java") == "L"

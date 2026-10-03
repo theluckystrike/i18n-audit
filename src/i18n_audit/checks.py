@@ -168,7 +168,7 @@ def compare(group: Group, cat: Catalog, entry: Entry, src: str, ref: str) -> Lis
             out.append(_finding(cat, entry, "placeholder_mismatch", msg + (". " + hint if hint else ""), src))
 
     # 3. tags
-    out.extend(_tag_findings(cat, entry, src, tr))
+    out.extend(_tag_findings(cat, entry, src, tr, syntax))
     return out
 
 
@@ -223,8 +223,10 @@ def _hint(src: str, tr: str, missing: List[str], extra: List[str], syntax: str) 
     return ""
 
 
-def _tag_findings(cat: Catalog, entry: Entry, src: str, tr: str) -> List[Finding]:
-    st, tt = ph.tags(src), ph.tags(tr)
+def _tag_findings(cat: Catalog, entry: Entry, src: str, tr: str, syntax: str) -> List[Finding]:
+    # '<b>' is literal text in formatjs, not a tag
+    src_m, tr_m = (icu.strip_quoted(src), icu.strip_quoted(tr)) if syntax == "icu" else (src, tr)
+    st, tt = ph.tags(src_m), ph.tags(tr_m)
     if not st and not tt:
         return []
     out = []
@@ -242,8 +244,8 @@ def _tag_findings(cat: Catalog, entry: Entry, src: str, tr: str) -> List[Finding
                             ("Trans component tags differ: " if trans else "Tags differ: ") + "; ".join(parts),
                             src, severity=sev))
         return out
-    bad = ph.unbalanced_tags(tr)
-    if bad and not ph.unbalanced_tags(src):
+    bad = ph.unbalanced_tags(tr_m)
+    if bad and not ph.unbalanced_tags(src_m):
         out.append(_finding(cat, entry, "tag_mismatch", "Unbalanced tags: " + ", ".join(bad), src))
     return out
 
