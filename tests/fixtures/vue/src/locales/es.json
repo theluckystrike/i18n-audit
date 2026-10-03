@@ -1,0 +1,8 @@
+{
+  "hello": "Hola {nombre}",
+  "list": "Hola {0} y {1}",
+  "linked": "@:common.ok, continuar",
+  "email": "Contacto: support{'@'}example.com",
+  "apples": "ninguna manzana | una manzana | {count} manzanas",
+  "common": {"ok": "Vale"}
+}

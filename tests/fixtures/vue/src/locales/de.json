@@ -1,0 +1,8 @@
+{
+  "hello": "Hallo {{name}}",
+  "list": "Hallo {1} und {0}",
+  "linked": "Weiter",
+  "email": "Kontakt: support{'@'}example.com",
+  "apples": "keine Äpfel | ein Apfel | {count} Äpfel",
+  "common": {"ok": "OK"}
+}

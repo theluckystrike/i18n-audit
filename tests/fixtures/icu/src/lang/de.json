@@ -1,0 +1,14 @@
+{
+  "inbox": "Sie haben {count, plural, one {# Nachricht} other {# Nachrichten}}",
+  "greeting": "Hallo {name}",
+  "invite": "{inviter} hat Sie zu {project} eingeladen",
+  "gender": "{gender, select, female {Ihr} male {Ihm}} gefällt {photo}",
+  "nested": "{count, plural, =0 {Keine Dateien in {folder}} one {Eine Datei in {folder}} other {# Dateien in {folder}}}",
+  "rank": "Sie wurden {place, selectordinal, other {#.}}",
+  "price": "Summe: {amount, number, ::currency/EUR}",
+  "apostrophe": "Fass {thing} nicht an",
+  "escaped": "Verwende '{braces}' wörtlich für {name}",
+  "rich": "Lies die <link>Doku</link> zu {topic}",
+  "day": "{count, plural, one {Jeden Tag} other {Alle {count} Tage}}",
+  "plain": "Speichern"
+}

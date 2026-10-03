@@ -1,0 +1,7 @@
+/* Greeting on the home screen */
+"greeting" = "Hello, %@!";
+"files" = "%1$@ shared %2$ld files";
+// single line comment
+"quote" = "Say \"hi\"";
+"only_en" = "Only English";
+"plain" = "Done";

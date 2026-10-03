@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#: views.py:10
+#, python-format
+msgid "Hello %(name)s"
+msgstr ""
+
+#, c-format
+msgid "%s uploaded %d files"
+msgstr ""
+
+#, python-brace-format
+msgid "Welcome {user}"
+msgstr ""
+
+#, python-format
+msgid "%(count)d file"
+msgid_plural "%(count)d files"
+msgstr[0] ""
+msgstr[1] ""
+
+msgctxt "button"
+msgid "Open"
+msgstr ""
+
+msgid "Read the <a>guide</a>"
+msgstr ""
+
+msgid "Untranslated here"
+msgstr ""

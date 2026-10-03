@@ -1,0 +1,7 @@
+/* Begrüßung */
+"greeting" = "Hallo!";
+"files" = "%2$ld Dateien von %1$@ geteilt";
+"quote" = "Sag \"hallo\"";
+"plain" = "Fertig";
+"stale" = "Alt";
+"plain" = "Erledigt";

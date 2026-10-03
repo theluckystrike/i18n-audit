@@ -1,0 +1,15 @@
+{
+  "greeting": "Bonjour {{name}",
+  "welcome": "Bon retour, {{name}} ! Vous avez {{count}} nouveaux messages.",
+  "brand": "Propulsé par {{whiteLabelText}}",
+  "terms": "J'accepte les <0>conditions</0> et la <1>politique de confidentialité</1>",
+  "bold": "C'est <b>important</b>",
+  "items_one": "{{count}} élément",
+  "items_other": "{{count}} éléments",
+  "nested": {"deep": {"title": "Paramètres de {{workspace}}"}},
+  "link": "Voir $t(common.brandName)",
+  "brandName": "Acme",
+  "prompt": "Tapez {{ pour insérer une variable",
+  "plain": "Enregistrer",
+  "onlyInSource": "Seulement dans la source"
+}

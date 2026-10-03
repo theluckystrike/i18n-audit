@@ -1,0 +1,39 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, python-format
+msgid "Hello %(name)s"
+msgstr "Hallo %(nom)s"
+
+#, c-format
+msgid "%s uploaded %d files"
+msgstr "%1$s hat %2$d Dateien hochgeladen"
+
+#, python-brace-format
+msgid "Welcome {user}"
+msgstr "Willkommen {benutzer}"
+
+#, python-format
+msgid "%(count)d file"
+msgid_plural "%(count)d files"
+msgstr[0] "Eine Datei"
+msgstr[1] "%(count)d Dateien"
+
+msgctxt "button"
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "Read the <a>guide</a>"
+msgstr "Lies die <a>Anleitung"
+
+msgid "Untranslated here"
+msgstr ""
+
+#, fuzzy, python-format
+msgid "Old %(thing)s"
+msgstr "Alt"
+
+#~ msgid "Obsolete"
+#~ msgstr "Veraltet"

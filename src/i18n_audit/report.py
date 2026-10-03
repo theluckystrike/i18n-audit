@@ -31,7 +31,6 @@ def text(findings: List[Finding], groups: List[Group], notes: List[str], tms_not
     out = []
     if tms_note:
         out.append("NOTE: " + tms_note)
-        out.append("")
     for n in notes:
         out.append("note: " + n)
     cur = None

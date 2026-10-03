@@ -90,7 +90,7 @@ class _Parser:
                 return i + len(lit)
         m = _NUMBER.match(s, i)
         if m and m.end() > i:
-            self.leaves.append((path, m.group(0), self.line(i)))
+            self.leaves.append((path, float(m.group(0)), self.line(i)))
             return m.end()
         raise JSONError(f"unexpected character {c!r}", self.line(i))
 

@@ -1,0 +1,19 @@
+{
+  "greeting": "Hello {{name}}",
+  "welcome": "Welcome back, {{name}}! You have {{count}} new messages.",
+  "brand": "Powered by {{whiteLabelText}}",
+  "terms": "I accept the <0>terms</0> and <1>privacy policy</1>",
+  "bold": "This is <b>important</b>",
+  "items_one": "{{count}} item",
+  "items_other": "{{count}} items",
+  "nested": {
+    "deep": {
+      "title": "Settings for {{workspace}}"
+    }
+  },
+  "link": "See $t(common.brandName)",
+  "brandName": "Acme",
+  "prompt": "Type {{ to insert a variable",
+  "plain": "Save",
+  "onlyInSource": "Only in source"
+}

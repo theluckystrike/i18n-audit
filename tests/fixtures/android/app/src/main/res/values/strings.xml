@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Demo</string>
+    <string name="welcome">Welcome, %1$s! You have %2$d new messages.</string>
+    <string name="cant_connect">Can\'t connect to %s</string>
+    <string name="quoted">"It's fine"</string>
+    <string name="bold">Tap <b>Save</b> to continue</string>
+    <string name="percent">100%% done</string>
+    <plurals name="songs">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <string-array name="planets">
+        <item>Mercury</item>
+        <item>Venus</item>
+    </string-array>
+    <string name="only_default">Only default</string>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome">Bienvenue, %1$s ! Vous avez %2$d nouveaux messages.</string>
+    <string name="cant_connect">Connexion impossible à %s
+</resources>

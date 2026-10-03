@@ -1,0 +1,15 @@
+fr:
+  greeting: 'Bonjour %{name}'
+  inbox:
+    one: "%{count} message"
+    other: "%{count} messages"
+  account:
+    title: Votre compte
+    description: >
+      Gérer les paramètres de %{account}
+      et de ses membres.
+  footer: |
+    Copyright %{year}
+  only_en: Seulement en anglais
+  date:
+    abbr_day_names: [dim, lun, mar]

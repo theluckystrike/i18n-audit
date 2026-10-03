@@ -1,0 +1,4 @@
+"greeting" = "Bonjour, %@ !";
+"files" = "%1$@ a partagé %2$ld fichiers";
+"quote" = "Dites \"salut\""
+"only_en" = "Seulement anglais";

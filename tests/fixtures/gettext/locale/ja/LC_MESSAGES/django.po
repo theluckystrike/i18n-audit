@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#, python-format
+msgid "Hello %(name)s"
+msgstr "こんにちは %(name)s"
+
+#, c-format
+msgid "%s uploaded %d files"
+msgstr "%2$d 個のファイルを %1$s がアップロードしました"
+
+#, python-format
+msgid "%(count)d file"
+msgid_plural "%(count)d files"
+msgstr[0] "%(count)d 個のファイル"
+
+msgctxt "button"
+msgid "Open"
+msgstr "開く"

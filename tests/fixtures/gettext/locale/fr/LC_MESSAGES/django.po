@@ -1,0 +1,34 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#, python-format
+msgid "Hello %(name)s"
+msgstr "Bonjour %(name)s"
+
+#, c-format
+msgid "%s uploaded %d files"
+msgstr "%s a envoyé %d fichiers"
+
+#, python-brace-format
+msgid "Welcome {user}"
+msgstr "Bienvenue {user}"
+
+#, python-format
+msgid "%(count)d file"
+msgid_plural "%(count)d files"
+msgstr[0] "%(count)d fichier"
+msgstr[1] "%(count)d fichiers"
+
+msgctxt "button"
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid "Read the <a>guide</a>"
+msgstr "Lisez le <a>guide</a>"
+
+msgid "Untranslated here"
+msgstr "Non traduit ici"
+
+msgid "Untranslated here"
+msgstr "Doublon"

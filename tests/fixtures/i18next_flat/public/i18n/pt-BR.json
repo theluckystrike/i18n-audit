@@ -1,0 +1,6 @@
+{
+  "nav.home": "Início",
+  "nav.greeting": "Oi {{user}}, você tem {{count, number}} créditos",
+  "nav.unescaped": "Valor: {{-html}}",
+  "nav.tags": "Clique <1>aqui</1>"
+}

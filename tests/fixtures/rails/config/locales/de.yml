@@ -1,0 +1,17 @@
+de:
+  greeting: "Hallo {name}"
+  inbox:
+    one: "Eine Nachricht"
+    other: "%{count} Nachrichten"
+  account:
+    title: Ihr Konto
+    description: >
+      Einstellungen für %{konto}
+      und seine Mitglieder verwalten.
+  footer: |
+    Copyright %{year}
+  old_key: Alt
+  date:
+    abbr_day_names: [So, Mo, Di]
+  account:
+    title: Ihr Konto

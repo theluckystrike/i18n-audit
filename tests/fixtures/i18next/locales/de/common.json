@@ -1,0 +1,24 @@
+{
+  "greeting": "Hallo {name}",
+  "welcome": "Willkommen zurück, {{name}}! Sie haben neue Nachrichten.",
+  "brand": "Bereitgestellt von ToolJet",
+  "terms": "Ich akzeptiere die <0>AGB</0> und <2>Datenschutzerklärung</2>",
+  "bold": "Das ist <b>wichtig",
+  "items_one": "Ein Element",
+  "items_other": "{{count}} Elemente",
+  "nested": {
+    "deep": {
+      "title": "Einstellungen für {{arbeitsbereich}}"
+    }
+  },
+  "link": "Siehe $t(common.brandName)",
+  "brandName": "Acme",
+  "prompt": "Tippe {{ um eine Variable einzufügen",
+  "plain": "Speichern",
+  "removedLongAgo": "Alt",
+  "nested": {
+    "deep": {
+      "title": "Einstellungen für {{workspace}}"
+    }
+  }
+}

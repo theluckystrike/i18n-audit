@@ -192,7 +192,7 @@ class _Parser:
         if v in ("true", "True", "TRUE", "false", "False", "FALSE"):
             return v.lower() == "true"
         if re.fullmatch(r"[-+]?\d+(\.\d+)?", v):
-            return v  # numbers are kept as text, never treated as translations
+            return float(v)  # numbers are configuration (precision, delimiters), not translations
         return v
 
     @staticmethod

@@ -63,15 +63,13 @@ def classify(rel: str, abspath: str) -> Optional[Tuple[str, str, str]]:
         return "android", loc, "/".join(parts[:-2] + ["values{loc}", fn])
 
     if ext == ".properties":
-        m = re.match(r"^(.+?)((?:_[A-Za-z]{2,3})(?:_[A-Za-z0-9]{2,8})*)?$", stem)
-        if not m:
-            return None
-        base, suffix = m.group(1), m.group(2)
-        loc = ""
-        if suffix:
-            loc = locales.parse(suffix[1:])
-            if not loc:
-                return None
+        # messages_de.properties, messages_pt_BR.properties, error_msg.properties (default bundle)
+        bits = stem.split("_")
+        base, loc = stem, ""
+        for n in (3, 2, 1):
+            if len(bits) > n and locales.parse("_".join(bits[-n:])):
+                base, loc = "_".join(bits[:-n]), "_".join(bits[-n:])
+                break
         return "properties", loc, "/".join(parts[:-1] + [base + "{loc}.properties"])
 
     if ext in (".po", ".pot"):
@@ -228,11 +226,10 @@ def discover(root: str, source_locale: str = "en", syntax: Optional[str] = None,
         pot = None
         if fmt == "po":
             pot = _find_pot(template, pots)
-        if src is None and not pot:
-            if len(locs) > 1 and fmt != "po":
+        if src is None and not pot and fmt != "po":
+            if len(locs) > 1:
                 notes.append(f"skipped {template}: no '{source_locale}' file among {len(locs)} locales")
-            elif fmt != "po":
-                continue
+            continue
         if len(locs) < 2 and not pot and fmt != "po":
             continue
         g = Group(template=template, fmt=fmt, syntax="", source_locale=src if src is not None else "")

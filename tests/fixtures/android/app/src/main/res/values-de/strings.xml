@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome">Willkommen, %1$s! Sie haben neue Nachrichten.</string>
+    <string name="cant_connect">Can't connect: %s</string>
+    <string name="quoted">"Alles gut"</string>
+    <string name="bold">Tippe auf <b>Speichern</b></string>
+    <string name="percent">100%% fertig</string>
+    <plurals name="songs">
+        <item quantity="one">Ein Lied</item>
+        <item quantity="other">%d Lieder</item>
+    </plurals>
+    <string-array name="planets">
+        <item>Merkur</item>
+        <item>Venus</item>
+    </string-array>
+    <string name="only_default">Nur Standard</string>
+    <string name="only_default">Doppelt</string>
+</resources>

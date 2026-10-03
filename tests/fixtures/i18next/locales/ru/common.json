@@ -1,0 +1,17 @@
+{
+  "greeting": "Привет, {{name}}",
+  "welcome": "С возвращением, {{name}}! У вас {{count}} новых сообщений.",
+  "brand": "Работает на {{whiteLabelText}}",
+  "terms": "Я принимаю <0>условия</0> и <1>политику конфиденциальности</1>",
+  "bold": "Это <b>важно</b>",
+  "items_one": "{{count}} элемент",
+  "items_few": "{{count}} элемента",
+  "items_many": "{{count}} элементов",
+  "items_other": "{{count}} элемента",
+  "nested": {"deep": {"title": "Настройки для {{workspace}}"}},
+  "link": "См. $t(common.brandName)",
+  "brandName": "Acme",
+  "prompt": "Введите {{ чтобы вставить переменную",
+  "plain": "Сохранить",
+  "onlyInSource": "Только в источнике"
+}

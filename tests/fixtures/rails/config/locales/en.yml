@@ -1,0 +1,15 @@
+en:
+  greeting: "Hello %{name}"
+  inbox:
+    one: "%{count} message"
+    other: "%{count} messages"
+  account:
+    title: Your account
+    description: >
+      Manage the settings for %{account}
+      and its members.
+  footer: |
+    Copyright %{year}
+  only_en: Only in English
+  date:
+    abbr_day_names: [Sun, Mon, Tue]
