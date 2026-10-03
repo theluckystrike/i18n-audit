@@ -1,0 +1,3 @@
+{
+  "Settings.roles.form.button.users-with-role": "{number, plural, =0 {# usuários} um {# usuário} outros {# usuários}} com esse papel"
+}

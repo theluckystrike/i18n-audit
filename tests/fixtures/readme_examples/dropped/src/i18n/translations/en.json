@@ -1,0 +1,9 @@
+{
+  "campaigns": {
+    "promotions": {
+      "toast": {
+        "success": "Successfully added {{count}} promotion(s) to campaign"
+      }
+    }
+  }
+}

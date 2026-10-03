@@ -1,5 +1,6 @@
-"""The three before/after examples in README.md: the "before" strings are
-reported, the "after" strings are clean."""
+"""Before/after examples: the "before" strings are reported, the "after"
+strings are clean. The first four are the examples in README.md, taken
+verbatim from public repositories; the rest are earlier audit examples."""
 import os
 import shutil
 
@@ -9,6 +10,14 @@ from conftest import audit, fixture_path
 from i18n_audit import checks, detect
 
 CASES = [
+    ("renamed", "translations/sv.json", "{bläddra}", "{browse}",
+     "placeholder_mismatch", "Looks renamed or translated: the code passes {browse}"),
+    ("dropped", "src/i18n/translations/fr.json", "Promotion(s) ajoutée(s)", "{{count}} promotion(s) ajoutée(s)",
+     "placeholder_mismatch", "missing {{count}}"),
+    ("icu_plural", "translations/pt-BR.json", "um {# usuário} outros", "one {# usuário} other",
+     "invalid_icu", "missing the required 'other' option"),
+    ("trans_lost", "src/i18n/translations/el.json", "- Επαναφορά", "- <0>Επαναφορά</0>",
+     "tag_mismatch", "missing </0>, <0>"),
     ("whitelabel", "locales/de/common.json", "Willkommen bei Acme", "Willkommen bei {{whiteLabelText}}",
      "placeholder_mismatch", "missing {{whiteLabelText}}"),
     ("lingui", "src/locales/it/messages.po", "Eliminare '{name}'?", "Eliminare ''{name}''?",
