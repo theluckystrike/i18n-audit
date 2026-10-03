@@ -1,0 +1,30 @@
+# Copy to .github/workflows/i18n-audit.yml in your repository.
+#
+# Fails pull requests that add translation errors, shows every finding as a
+# code scanning alert on the changed lines, and writes a summary table to the
+# job page. On private repositories without GitHub Advanced Security, set
+# upload-sarif: "false" and drop the security-events permission.
+name: i18n-audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write   # SARIF upload to code scanning
+
+jobs:
+  i18n-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: theluckystrike/i18n-audit@v1
+        with:
+          path: .                 # directory to scan
+          source-locale: en       # en also matches en-US, en_GB
+          fail-on: 1              # fail at 1 or more error findings; 0 never fails
+          format: text            # report in the log: text, json, md or sarif
+          args: --skip stale_key  # optional extra CLI flags

@@ -1,5 +1,5 @@
-name: i18n-audit
-description: Find broken placeholders, invalid ICU messages, lost Trans tags and missing keys in locale files.
+name: i18n-audit translation bug finder
+description: Find translation bugs users see in locale files. Broken placeholders, invalid ICU, lost Trans tags, missing keys.
 author: theluckystrike
 branding:
   icon: globe
@@ -15,14 +15,20 @@ inputs:
   fail-on:
     description: Fail the step when there are at least this many error findings. 0 never fails.
     default: "1"
+  format:
+    description: Format of the report printed to the log and saved as report-file (text, json, md or sarif).
+    default: text
+  report-file:
+    description: Where to save the report in the chosen format. Defaults to i18n-audit-report.<ext>.
+    default: ""
   code-scan:
-    description: Also scan JS/TS/Vue/Ruby code for keys missing from the source locale ("true" or "false").
+    description: Also scan JS/TS/Vue/Svelte/Ruby code for keys missing from the source locale ("true" or "false").
     default: "false"
   args:
     description: Extra arguments for i18n-audit, e.g. "--skip stale_key --min-severity warning".
     default: ""
   sarif-file:
-    description: Where to write the SARIF report.
+    description: Where to write the SARIF report used for code scanning.
     default: i18n-audit.sarif
   upload-sarif:
     description: Upload the SARIF report to GitHub code scanning (needs security-events write permission).
@@ -38,6 +44,9 @@ outputs:
   sarif-file:
     description: Path of the SARIF report.
     value: ${{ steps.audit.outputs.sarif-file }}
+  report-file:
+    description: Path of the report in the chosen format.
+    value: ${{ steps.audit.outputs.report-file }}
   exit-code:
     description: Exit code of i18n-audit (1 when the fail-on threshold was reached).
     value: ${{ steps.audit.outputs.exit-code }}
@@ -45,15 +54,26 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
+      id: python
       with:
         python-version: ${{ inputs.python-version }}
+        update-environment: false
 
+    # Installed into its own virtualenv from the action's checkout, so the
+    # version matches the tag in `uses:` and the job's Python is left alone.
     - name: Install i18n-audit
       shell: bash
-      run: python -m pip install --disable-pip-version-check --quiet "$ACTION_PATH"
       env:
         ACTION_PATH: ${{ github.action_path }}
+        PYTHON: ${{ steps.python.outputs.python-path }}
+      run: |
+        venv="$RUNNER_TEMP/i18n-audit-venv"
+        "$PYTHON" -m venv "$venv"
+        if [ -x "$venv/bin/python" ]; then bin="$venv/bin"; else bin="$venv/Scripts"; fi
+        "$bin/python" -m pip install --disable-pip-version-check --quiet "$ACTION_PATH"
+        echo "I18N_AUDIT=$bin/i18n-audit" >> "$GITHUB_ENV"
+        "$bin/i18n-audit" --version
 
     - name: Run i18n-audit
       id: audit
@@ -62,21 +82,30 @@ runs:
         SCAN_PATH: ${{ inputs.path }}
         SOURCE_LOCALE: ${{ inputs.source-locale }}
         FAIL_ON: ${{ inputs.fail-on }}
+        FORMAT: ${{ inputs.format }}
+        REPORT_FILE: ${{ inputs.report-file }}
         CODE_SCAN: ${{ inputs.code-scan }}
         EXTRA_ARGS: ${{ inputs.args }}
         SARIF_FILE: ${{ inputs.sarif-file }}
       run: |
         set +e
+        case "$FORMAT" in
+          text) ext=txt ;;
+          json|md|sarif) ext="$FORMAT" ;;
+          *) echo "::error::format must be text, json, md or sarif, got '$FORMAT'"; exit 2 ;;
+        esac
+        if [ -z "$REPORT_FILE" ]; then REPORT_FILE="i18n-audit-report.$ext"; fi
+
         args=("$SCAN_PATH" --source-locale "$SOURCE_LOCALE")
         if [ "$CODE_SCAN" = "true" ]; then args+=(--code-scan); fi
         # shellcheck disable=SC2206
         extra=($EXTRA_ARGS)
         args+=("${extra[@]}")
 
-        # SARIF paths must be relative to the repository root, so scan from there.
-        i18n-audit "${args[@]}" --fail-on 0 --format sarif --output "$SARIF_FILE"
+        # SARIF paths must be relative to the repository root, so prefix the scan path.
+        "$I18N_AUDIT" "${args[@]}" --fail-on 0 --format sarif --output "$SARIF_FILE" || exit 2
         if [ "$SCAN_PATH" != "." ]; then
-          python - "$SARIF_FILE" "$SCAN_PATH" <<'PY'
+          "${I18N_AUDIT%/*}/python" - "$SARIF_FILE" "$SCAN_PATH" <<'PY'
         import json, os, sys
         path, prefix = sys.argv[1], os.path.normpath(sys.argv[2])
         doc = json.load(open(path, encoding="utf-8"))
@@ -89,21 +118,24 @@ runs:
         PY
         fi
 
-        i18n-audit "${args[@]}" --fail-on 0 --format md --min-severity warning > i18n-audit-summary.md
-        head -c 900000 i18n-audit-summary.md >> "$GITHUB_STEP_SUMMARY"
-        rm -f i18n-audit-summary.md
+        summary="$RUNNER_TEMP/i18n-audit-summary.md"
+        "$I18N_AUDIT" "${args[@]}" --fail-on 0 --format md --min-severity warning --output "$summary"
+        head -c 900000 "$summary" >> "$GITHUB_STEP_SUMMARY"
 
-        i18n-audit "${args[@]}" --fail-on "$FAIL_ON"
+        "$I18N_AUDIT" "${args[@]}" --format "$FORMAT" --output "$REPORT_FILE" --fail-on "$FAIL_ON"
         code=$?
+        if [ "$FORMAT" = "text" ] || [ "$FORMAT" = "md" ]; then cat "$REPORT_FILE"; else echo "Report written to $REPORT_FILE"; fi
         echo "exit-code=$code" >> "$GITHUB_OUTPUT"
         echo "sarif-file=$SARIF_FILE" >> "$GITHUB_OUTPUT"
+        echo "report-file=$REPORT_FILE" >> "$GITHUB_OUTPUT"
+        if [ "$code" -gt 1 ]; then exit "$code"; fi
         exit 0
 
     - name: Upload SARIF
-      if: ${{ always() && inputs.upload-sarif == 'true' }}
-      uses: github/codeql-action/upload-sarif@v3
+      if: ${{ always() && inputs.upload-sarif == 'true' && steps.audit.outputs.sarif-file != '' }}
+      uses: github/codeql-action/upload-sarif@v4
       with:
-        sarif_file: ${{ inputs.sarif-file }}
+        sarif_file: ${{ steps.audit.outputs.sarif-file }}
         category: ${{ inputs.sarif-category }}
 
     - name: Check result
