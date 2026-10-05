@@ -239,4 +239,6 @@ pip install -e ".[test]"
 pytest
 ```
 
-Paid fixed-scope audit + fix for your app: https://theluckystrike.github.io/oss-maintenance/i18n-audit/
+## Support
+
+The tool is free and MIT licensed. If you want it run on your app with the fixes done for you, there is a [fixed-price i18n audit](https://theluckystrike.github.io/oss-maintenance/i18n-audit/). To support the work: [GitHub Sponsors](https://github.com/sponsors/theluckystrike).
